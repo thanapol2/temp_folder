@@ -1,0 +1,17 @@
+import smtplib
+
+sender = ''
+receivers = ['']
+
+
+
+message = ""
+
+try:
+
+    server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+    server.login(sender, "")
+    server.sendmail(sender, receivers, message)
+    print("Successfully sent email")
+except smtplib.SMTPException:
+    print ("Error: unable to send email")
