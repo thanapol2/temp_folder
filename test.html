@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.css">
+
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>-->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
+
+<body>
+    <form id="myForm" method = "POST">
+        <div>PO_NO : <input type="text" id="pono"></div>
+
+        <p><input type = "submit" id="submit" value = "submit" /></p>
+        <table id="po_detail">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>qty</th>
+                    <th>BTN</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </form>
+    <table id="table_id" class="display">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Detail</th>
+            <th>Grouping</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>P001</td>
+            <td>iphone11</td>
+            <td>Ram 4</td>
+            <td>smart</td>
+            <td><button class="btnSelect">Select</button></td>
+        </tr>
+        <tr>
+            <td>P002</td>
+            <td>iphone11 pro</td>
+            <td>Ram 6</td>
+            <td>smart</td>
+            <td><button class="btnSelect">Select</button></td>
+        </tr>
+    </tbody>
+</table>
+</body>
+<script>
+$(document).ready(function() {
+    $("#myForm").submit(function(e) {
+		e.preventDefault();
+		clickSubmit()
+	});
+    $('#table_id').DataTable();
+
+    $('.btnSelect').on('click',function(){
+         var currentRow=$(this).closest("tr");
+         var col1=currentRow.find("td:eq(0)").html();
+         var col2=currentRow.find("td:eq(1)").html();
+            // $('#po_detail').append('<tr><td>'+col1+'</td><td>a</td><td>b</td></tr>');
+         $('#po_detail').append('<tr><td>'+col1+'</td><td><input type="text"></td><td><a href="#" class="delete">Delete</a></td></tr>');
+    });
+    function clickSubmit(){
+        var data = []
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                alert(this.responseText)
+            }
+        };
+        var po_detail = $('#po_detail tr:gt(0)').map(function() {
+            return {
+                name:  $(this.cells[0]).text(),
+                email: $(this.cells[1]).find("input[type='text']").val()
+            };
+        }).get();
+        data.push({po_no:$('#pono').val()})
+        data.push({detail : po_detail})
+        var json_data = JSON.stringify(data)
+        xmlhttp.open("POST", "/result")
+	    xmlhttp.setRequestHeader("Content-Type", "application/json ; charset=UTF-8" )
+	    xmlhttp.send(json_data)
+      };
+
+
+    var max_fields = 10;
+    var wrapper = $("#myForm");
+    var add_button = $(".add_form_field");
+
+
+    $(wrapper).on("click", ".delete", function(e) {
+        e.preventDefault();
+        $(this).parent('td').parent('tr').remove();
+    })
+});
+</script>
+
+</html>
